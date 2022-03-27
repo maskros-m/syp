@@ -48,9 +48,10 @@
 	    if (isAlpha($inputVal)) { $msg .= chr(ord($inputVal) - 32);
 		// $state = 1; // return to lowercase. Disable this if CAPSLOCK function is more desirable.
 	    }
-	    else if (isSpace($inputVal)) {	$msg .= ' ';
+	    else if (isSpace($inputVal) && strlen($msg) != 0) { $msg .= ' ';
 	    	// same as above
 	    }
+	    else if (isSpace($inputVal) && strlen($msg) == 0) { $state = 0; } //WhatsApp's minor inconsistency
 	    else if (isShift($inputVal)) { $state = 1;
 	    	// disable this whole branch if CAPSLOCK is not intended.
 	    }
