@@ -38,7 +38,7 @@ CREATE TABLE `accounts` (
 --
 
 INSERT INTO `accounts` (`Email`, `Password`, `customersId`) VALUES
-('tranlysp@gmail.com', 'lytran1511', 1);
+('alice@wonderland.com', 'madhatter', 1);
 
 -- --------------------------------------------------------
 
@@ -60,7 +60,7 @@ CREATE TABLE `billingaddr` (
 --
 
 INSERT INTO `billingaddr` (`id`, `customersId`, `Address`, `City`, `Zipcode`, `Country`) VALUES
-(1, 1, 'Körösistraße 124', 'Graz', '8010', 'Austria');
+(1, 1, 'Lalaland 123', 'Graz', '8010', 'Austria');
 
 -- --------------------------------------------------------
 
@@ -119,7 +119,7 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`id`, `firstName`, `lastName`, `Birthdate`, `Phone`, `Billing_Addr`, `Shipping_Addr`, `Email`) VALUES
-(1, 'Ly', 'Tran', '1990-11-15', '06641234567', 1, 1, 'tranlysp@gmail.com');
+(1, 'Alice', 'Wonderland', '2010-04-03', '06641234567', 1, 1, 'alice@wonderland.com');
 
 -- --------------------------------------------------------
 
@@ -184,7 +184,7 @@ CREATE TABLE `shippingaddr` (
 --
 
 INSERT INTO `shippingaddr` (`id`, `customersId`, `Address`, `City`, `Zipcode`, `Country`) VALUES
-(1, 1, 'Körösistraße 124', 'Graz', '8010', 'Austria');
+(1, 1, 'Lalaland 123', 'Graz', '8010', 'Austria');
 
 --
 -- Indexes for dumped tables
