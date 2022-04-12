@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 10, 2022 at 09:55 AM
+-- Generation Time: Apr 12, 2022 at 03:02 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.1
 
@@ -70,9 +70,7 @@ INSERT INTO `billingaddr` (`id`, `customersId`, `Address`, `City`, `Zipcode`, `C
 
 CREATE TABLE `cart` (
   `id` int(11) NOT NULL,
-  `totalPrice` double DEFAULT NULL,
-  `orderDate` date DEFAULT NULL,
-  `orderTime` time DEFAULT NULL
+  `totalPrice` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -86,8 +84,18 @@ CREATE TABLE `cartitems` (
   `ProductId` int(11) DEFAULT NULL,
   `Quantity` int(11) DEFAULT NULL,
   `Price` double DEFAULT NULL,
+  `totalPrice` double DEFAULT NULL,
   `cartId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `cartitems`
+--
+
+INSERT INTO `cartitems` (`id`, `ProductId`, `Quantity`, `Price`, `totalPrice`, `cartId`) VALUES
+(1, 1, 3, 2.5, 7.5, NULL),
+(3, 6, 1, 4.9, 4.9, NULL),
+(5, 4, 1, 19.95, 19.95, NULL);
 
 -- --------------------------------------------------------
 
@@ -262,7 +270,7 @@ ALTER TABLE `cart`
 -- AUTO_INCREMENT for table `cartitems`
 --
 ALTER TABLE `cartitems`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `customers`
