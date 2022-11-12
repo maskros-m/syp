@@ -3,9 +3,8 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "streams_1.h"
+#include "streams.h"
 
-// working until -put
 int main(int argc, char *argv[]) {
     BOOTSECTOR bootsector = {"3AKIFT", DEFAULT_BLOCK_SIZE, MAX_BLOCK_COUNT};
     FAT_SYSTEM System = {0};
@@ -79,8 +78,6 @@ int main(int argc, char *argv[]) {
                         getArrayWithFreeBlocks(&System, _fileSize, &freebls);
                         writeFiletoPartition(&System, userFile, fileName, &freebls);
                         addUsedBlocksToFAT(&System, &freebls, i);
-
-                        // write entire metadata FAT_SYSTEM struct back to partition
                         overwriteOldMetadata(fileName, &System);
                     } // if (blockCnt <= _freeBlocks)
                     break;
@@ -94,35 +91,37 @@ int main(int argc, char *argv[]) {
             isFilenameProvided(fileName, "-partition");
             char* userFile = argv[i+1];
             isFilenameProvided(userFile, "-show");
-            // FILE* fp = fopen(userFile, "rb");
-            // checkIfFileExists(fp);
 
             TrackedBlocks usedBlocks;
             findOccupiedBlocks(&System, userFile, &usedBlocks);
             printBlockArray(usedBlocks.arr, usedBlocks.cnt);
-            // DENTRY* dirEntry = System.rootDir.dirEntries;
-            // int* FatEntry = System.fat.fatTable;
-            // int count = 0;
-            // for (int i=0; i<MAX_DIR_ENTRIES;i++) {
-            //     if (strcmp(userFile, dirEntry[i].filename)==0) {
-            //         printf("Copy no [%d] of [%s]\n", ++count, userFile);
-            //         printf("Blocks used: %d", dirEntry[i].firstblock);
-            //         int fatIndex = dirEntry[i].firstblock;
-            //         while (FatEntry[fatIndex] != EOF) {
-            //             printf(", %d", FatEntry[fatIndex++]);
-            //         }
-            //         printf("\n");
-            //         // printf(" last block: [%d]\n", FatEntry[--fatIndex]); 
-            //     }
-            // }
         } // -show
 
-        if (strcmp(argv[i], "-put")==0) {
+        // streams -partition test.bin -put laugh.png
+        if (strcmp(argv[i], "-put")==0) { 
             isFilenameProvided(fileName, "-partition");
             char* userFile = argv[i+1];
             isFilenameProvided(userFile, "-put");
 
             writeFileFromPartition (fileName, userFile, &System);
+        } // -put
+
+        // streams -partition test.bin -dir
+        if (strcmp(argv[i], "-dir")==0) {
+            // isFilenameProvided(fileName, "-partition");
+            // char* userDir = argv[i+1];
+            // // isFilenameProvided(userDir, "-dir");
+            // char path[255];
+            // if (userDir==NULL || strcmp(userDir, ".")==0) {
+            //     strcpy(path, fileName);
+            // } else { strcpy(path, userDir); }
+            // printf("%s\n", path);
+
+            // DENTRY* dirEntry = System.rootDir.dirEntries;
+            // int i = 0;
+            // while(dirEntry[i].filename[0]) {
+            //     printf("%s\n", dirEntry[i++].filename);
+            // }
         }
     } // for
     return 0;
@@ -131,14 +130,14 @@ int main(int argc, char *argv[]) {
 // Functions to update partition file & temp Fat file
 void readPartitionMetadata(char *fileName, FAT_SYSTEM* System) {
     FILE* fp = fopen(fileName, "rb");
-    checkIfFileExists(fp);
+    checkIfFileExists(fp, "partition");
     fread(System, 1, sizeof(FAT_SYSTEM), fp);
     fclose(fp);
 }
 
 void overwriteOldMetadata(char *fileName, FAT_SYSTEM* System) {
     FILE* fp = fopen(fileName, "rb+");
-    checkIfFileExists(fp);
+    checkIfFileExists(fp, "partition");
     fwrite(System, 1, sizeof(FAT_SYSTEM), fp);
     fclose(fp);
 }
@@ -180,7 +179,7 @@ void addUsedBlocksToFAT(FAT_SYSTEM *System, TrackedBlocks *freebls, int freeInde
 void printStats(char *fileName) {
     FAT_SYSTEM System;
     FILE *fd = fopen(fileName, "rb");
-    checkIfFileExists(fd);
+    checkIfFileExists(fd, "partition");
     fread(&System, 1, sizeof(FAT_SYSTEM), fd);
     fclose(fd);
 
@@ -249,15 +248,18 @@ int getArrayWithFreeBlocks(FAT_SYSTEM* System, int filesize, TrackedBlocks* free
 }
 
 int findOccupiedBlocks(FAT_SYSTEM *System, char* userFile, TrackedBlocks* usedBlocks) {
+
     DENTRY* dirEntry = System->rootDir.dirEntries;
     int* FatEntry = System->fat.fatTable;
     int index = 0;
     for (int i=0; i<MAX_DIR_ENTRIES;i++) {
-        printf("[%d] => %s\n", i, dirEntry[i].filename);
         if (strcmp(userFile, dirEntry[i].filename)==0) {
             usedBlocks->cnt = getNumberOfBlocksTaken(dirEntry[i].size, System->bootsector.blocksize);
             index = i;
             break; // find only first file with that name
+        } else { 
+            puts("No such file in partition\n");
+            exit(-1);
         }
     }
     int* blockArray = malloc(sizeof(int) * usedBlocks->cnt);
@@ -268,7 +270,7 @@ int findOccupiedBlocks(FAT_SYSTEM *System, char* userFile, TrackedBlocks* usedBl
     while (FatEntry[fatIndex] != EOF) {
         blockArray[j++] = FatEntry[fatIndex++];
     }
-    return 0;
+    return dirEntry[index].size; // returns size of file
 }
 
 void printBlockArray (int* arr, int size) {
@@ -300,20 +302,6 @@ int writeFiletoPartition(FAT_SYSTEM* System, char* fileName, char* partitionName
     fclose(partitionPtr);
 }
 
-void checkIfFileExists(FILE* fileName) {
-    if (fileName == NULL) {
-        printf("Error: no such partition\n");
-        exit(-1);
-    }
-}
-
-void isFilenameProvided(char* fileName, char* command) {
-    if (fileName == NULL) {
-        printf("Error: No file name near `%s` specified\n", command);
-        exit(-1);
-    }  
-}
-
 int writeFileFromPartition (char* partitionName, char* userFile, FAT_SYSTEM* System) {
     char destinationPath[255] = "copiedFrom_";
     prepareOutputFilePath(destinationPath, partitionName, userFile);
@@ -341,6 +329,26 @@ int writeFileFromPartition (char* partitionName, char* userFile, FAT_SYSTEM* Sys
     fclose(destinationFile);
     fclose(fp);
     return byteCount;
+}
+
+void checkIfFileExists(FILE* fileName, char* fileType) {
+    if (fileName == NULL) {
+        if (strcmp(fileType, "partition")==0)
+            printf("Error: partition\n");
+        else if (strcmp(fileType, "file")==0)
+            printf("Error: no such file\n");
+        else if (strcmp(fileType, "dir")==0)
+            printf("Error: no such directory");
+        else { printf("Error: please specify a valid path"); }
+        exit(-1);
+    }
+}
+
+void isFilenameProvided(char* fileName, char* command) {
+    if (fileName == NULL) {
+        printf("Error: No file name near `%s` specified\n", command);
+        exit(-1);
+    }  
 }
 
 void prepareOutputFilePath(char* destinationPath, char* partitionName, char* userFile) {
