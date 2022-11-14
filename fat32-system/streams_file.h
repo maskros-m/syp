@@ -1,5 +1,5 @@
-#ifndef STREAMS_H
-#define STREAMS_H
+#ifndef STREAMS_FILE_H
+#define STREAMS_FILE_H
 #pragma once
 
 typedef struct BOOTSECTOR {
