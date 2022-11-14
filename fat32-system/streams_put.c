@@ -5,7 +5,7 @@
 
 #include "streams_put.h"
 
-// working until -put
+// working until -put. Still with bugs
 int main(int argc, char *argv[]) {
     BOOTSECTOR bootsector = {"3AKIFT", DEFAULT_BLOCK_SIZE, MAX_BLOCK_COUNT};
     FAT_SYSTEM System = {0};
