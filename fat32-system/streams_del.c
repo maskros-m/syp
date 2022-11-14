@@ -3,9 +3,10 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "streams.h"
+#include "streams_del.h"
 
-// Working until -put now. Mustinitialize a value for Dentry.isDir when writing it to the Fat System, else error
+// Working until -put now. Must initialize a value for Dentry.isDir when writing it to the Fat System
+// Bugs in findOccupiedBlocks not yet fixed (issues with -show, -put and -add new files)
 
 int main(int argc, char *argv[]) {
     BOOTSECTOR bootsector = {"3AKIFT", DEFAULT_BLOCK_SIZE, MAX_BLOCK_COUNT};
