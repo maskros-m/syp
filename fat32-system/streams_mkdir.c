@@ -3,9 +3,9 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "streams.h"
+#include "streams_mkdir.h"
 
-// Working until -put now. Mustinitialize a value for Dentry.isDir when writing it to the Fat System, else error
+// Working until -mkdir now.
 
 int main(int argc, char *argv[]) {
     BOOTSECTOR bootsector = {"3AKIFT", DEFAULT_BLOCK_SIZE, MAX_BLOCK_COUNT};
