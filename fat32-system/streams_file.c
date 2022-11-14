@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "streams.h"
+#include "streams_file.h"
 
 // Working until -put now. Mustinitialize a value for Dentry.isDir when writing it to the Fat System, else error
 
