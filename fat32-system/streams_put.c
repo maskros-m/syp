@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "streams_1.h"
+#include "streams_put.h"
 
 // working until -put
 int main(int argc, char *argv[]) {
