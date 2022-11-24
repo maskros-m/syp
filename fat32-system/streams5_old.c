@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "streams5.h"
+#include "streams5_old.h"
 
 // Implementation of subdirectories
 
