@@ -1,5 +1,5 @@
-#ifndef STREAMS5_H
-#define STREAMS5_H
+#ifndef STREAMS5_OLD_H
+#define STREAMS5_OLD_H
 #pragma once
 
 // implementation of subdirectories
